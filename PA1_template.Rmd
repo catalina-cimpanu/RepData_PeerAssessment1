@@ -133,7 +133,37 @@ median(StepsPerDay, na.rm = TRUE)
 Imputing missing data gives higher values for the estimates of the total daily number of steps.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-
+1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.  
+- First save date as weekday
 ```{r}
-
+newActivity$date <- weekdays(newActivity$date, abbreviate = FALSE)
 ```
+- Quickly see date
+```{r}
+table(newActivity$date)
+```
+- Then create the new variable
+```{r}
+newActivity$day = ifelse(newActivity$date %in% c("Saturday", "Sunday"), "weekend", "weekday")
+```
+- See the new variable
+```{r}
+table(newActivity$day)
+```
+
+2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+- First average steps by interval and by day
+```{r}
+AvgStepsByDay <- aggregate(newActivity$steps, list(interval = newActivity$interval, 
+                                       day = newActivity$day), mean)
+```
+- Then plot using lattice
+```{r}
+library(lattice)
+xyplot(x ~ interval | day, AvgStepsByDay, layout=c(1,2), type = "l", ylab = "Steps", xlab = "Interval")
+```
+
+It seems that on average, there is more activity in the weekend compared to weekdays, except for the beginning of the day, where the number of steps is higher on weekdays.
+
+
+
